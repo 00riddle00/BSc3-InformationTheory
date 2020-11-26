@@ -1,0 +1,7 @@
+parameter 5-bit
+tailLength 4-bit
+if tailLength > 0 -> tail tailLength-bit
+dic length parameter-bit
+dict [value, encodedStrSize, encodedStr] [parameter-bit, parameter-bit, enncodedStrSize-bit] [0000001, 6, 001110]
+encoded text
+nullTailLength 8-bit
