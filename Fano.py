@@ -5,7 +5,7 @@ from bitstream import BitStream
 from numpy import *
 import time
 
-# Shannon-Fano Algorithm for Data Compression
+# Shannon-Fano Coding for Lossless Data Compression
 
 def shannon_fano_encoder(iA, iB): # iA to iB : index interval
   global tupleList
@@ -202,13 +202,13 @@ if mode == 'e': # FILE ENCODING
   # print('0'*8,end='') # to write the last remaining bits (if any)
   # print('\n',bitStream)
   # fo.write(chr(nullTail))
-  
+
   fo.write(bytes([nullTail]))
   # print('0'*8, str(bin(nullTail))[2:],sep='')
   # print()
   # print("nullTailLength", nullTail)
   fo.close()
-  
+
   fileSize = os.path.getsize(outputFile)
   # fileSize = len(byteArr)
   if fileSize < 1000:

@@ -5,7 +5,7 @@ from bitstream import BitStream
 from numpy import *
 import time
 
-# Shannon-Fano Algorithm for Data Compression
+# Shannon-Fano Coding for Lossless Data Compression
 
 def shannon_fano_encoder(iA, iB): # iA to iB : index interval
   global tupleList
