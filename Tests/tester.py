@@ -210,7 +210,7 @@ if mode == 'e': # FILE ENCODING
   # print('0'*8,end='') # to write the last remaining bits (if any)
   # print('\n',bitStream)
   # fo.write(chr(nullTail))
-  
+
   fo.write(bytes([nullTail]))
   # print('0'*8, str(bin(nullTail))[2:],sep='')
   # print()
