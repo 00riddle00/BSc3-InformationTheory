@@ -1,0 +1,62 @@
+Input file size 4.2643MB
+
+
+k=2
+--encoding--
+
+Compressed file size 4.596478 MB
+
+Execution time: 72.47987198829651 seconds
+
+--decoding--
+
+Execution time: 64.58809685707092 seconds
+
+k=3
+--encoding--
+
+Compressed file size 4.301159 MB
+
+Execution time: 64.1059353351593 seconds
+--decoding--
+
+Execution time: 57.66033744812012 seconds
+
+k=4
+--encoding--
+
+Compressed file size 4.371778 MB
+
+Execution time: 58.31806492805481 seconds
+--decoding--
+
+Execution time: 58.484931230545044 seconds
+
+k=8
+--encoding--
+
+Compressed file size 3.813598 MB
+
+Execution time: 52.06877589225769 seconds
+--decoding--
+
+Execution time: 50.71416187286377 seconds
+
+k=16
+--encoding--
+
+Compressed file size 3.478053 MB
+
+Execution time: 49.25487565994263 seconds
+--decoding--
+
+Execution time: 45.03227972984314 seconds
+
+k=24
+--encoding--
+
+Compressed file size 3.721196 MB
+
+Execution time: 51.48163819313049 seconds
+--decoding--
+
