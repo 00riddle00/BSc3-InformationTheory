@@ -21,5 +21,7 @@ PARAMETER=2          # k = 2..24
 ./testerFano.py e Assets/"$TESTFILE"                   Results/Fano/encoded."$TESTFILE".bin $PARAMETER
 ./testerFano.py d Results/Fano/encoded."$TESTFILE".bin Results/Fano/decoded."$TESTFILE"
 diff -s           Assets/"$TESTFILE"                   Results/Fano/decoded."$TESTFILE"
-```
 
+# Any newly created encoded (.bin) and decoded (.png, .bmp, .txt, ...) files
+# in Results/ folder during tests are ignored by git (see .gitignore)
+```
