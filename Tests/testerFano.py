@@ -89,6 +89,7 @@ if len(sys.argv) < 4:
     print('Usage: ShannonFano.py [e|d] '
           '[path]InputFileName [path]OutputFileName parameter')
     exit()
+
 mode = sys.argv[1] # encoding/decoding
 
 if mode not in ['e', 'd']:
@@ -102,18 +103,21 @@ if os.stat(inputFile).st_size == 0:
 
 fileSize = os.path.getsize(inputFile)
 fi = open(inputFile, 'rb')
+
+# just an array of bytes read
 byteArr = bytearray(fi.read(fileSize))
 
 fi.close()
+
+# file size in bytes
 fileSize = len(byteArr)
 
 if fileSize < 1000:
-    print('Input file size {} B'.format(fileSize))
+    print('Input file size {} B\n'.format(fileSize))
 elif fileSize < 10**6:
-    print('Input file size {} KB'.format(fileSize/10**3))
+    print('Input file size {} KB\n'.format(fileSize/10**3))
 else:
-    print('Input file size {} MB'.format(fileSize/10**6))
-print()
+    print('Input file size {} MB\n'.format(fileSize/10**6))
 
 start_time = time.time()
 mid_time = time.time()
@@ -122,17 +126,21 @@ mid_time = time.time()
 # Encoding
 # =============================================================================
 
-# mode = 'e'
-# inputFile = "./input.txt"
-# outputFile = "./encoded.bin"
+DEBUG = True
+
+def debug(*args, **kwargs):
+    if DEBUG:
+        print(*args, **kwargs)
+
+# example:
+#   mode = 'e'
+#   inputFile = "./input.txt"
+#   outputFile = "./encoded.bin"
 
 if mode == 'e':
     parameter = int(sys.argv[4])
-    # parameter = 2
-    # freqList[5] = 5      0101 is found 5 times
-    # array index is the bit that is needed and the value is it's frequency
 
-    freqList = [0] * 2**parameter # galima kažkaip optimizint
+    freqList = [0] * 2**parameter
     byteStr = ""
     for byte in byteArr:
         bitStrem = BitStream()
@@ -143,13 +151,18 @@ if mode == 'e':
             byteStr = byteStr[parameter:]
             freqList[int(word, 2)] += 1
 
-    # The leftovers from the file that don't fit
-    # in the parameter will be stored as a tail
+    # example:
+    #   parameter = 2
+    #   freqList[5] = 5      "0101" letter is found 5 times
+    #   array index is the letter in decumal and the value is its frequency
+
+    # The remaining bits of the file that don't fit
+    # in the parameter length will be stored as a tail
     tail = ''
     if len(byteStr) > 0:
         tail = byteStr
 
-    # print("Tail: ", tail)
+    debug("Tail: ", tail, '\n')
 
     # create a list of (frequency, byteValue, encodingBitStr) tuples
     tupleList = []
@@ -160,22 +173,25 @@ if mode == 'e':
     # sort the list according to the frequencies descending
     tupleList = sorted(tupleList, key=lambda tup: tup[0], reverse = True)
 
+    debug("tupleList: ", tupleList, '\n')
 
-    print("--- bitifying {} seconds ---".format(time.time() - mid_time))
+    print("--- bitifying {} seconds ---\n".format(time.time() - mid_time))
     mid_time = time.time()
 
     shannon_fano_encoder(0, len(tupleList) - 1)
 
+    debug("bitified tupleList: ", tupleList, '\n')
+
     print("--- encoding {} seconds ---".format(time.time() - mid_time))
     mid_time = time.time()
-    # print('The list of (frequency, byteValue, encodingBitStr) tuples:')
-    # print(tupleList)
-    # print()
+
+    debug('\nThe list of (frequency, byteValue, encodingBitStr) tuples:\n',
+          tupleList, '\n')
 
     dic = dict([(tup[1], tup[2]) for tup in tupleList])
     del tupleList # unneeded anymore
-    # print 'The dictionary of byteValue : encodingBitStr pairs:'
-    # print(dic)
+
+    debug('The dictionary of byteValue : encodingBitStr pairs:\n', dic, '\n')
 
     # write a list of (byteValue,3-bit(len(encodingBitStr)-1),encodingBitStr)
     # tuples as the compressed file header
@@ -187,18 +203,20 @@ if mode == 'e':
     # add 0's if needed for 5 bits
     parameterBitStr = '0' * (5 - len(parameterBitStr)) + parameterBitStr
     byteWriter(parameterBitStr, fo)
-    # print(parameterBitStr,end='')
+    debug('parameterBitStr:', parameterBitStr)
 
     tailLengthBitStr = bin(len(tail)) # then we write the length of the tail
     tailLengthBitStr = tailLengthBitStr[2:]
     tailLengthBitStr = '0' * (4 - len(tailLengthBitStr)) + tailLengthBitStr
     byteWriter(tailLengthBitStr, fo)
-    # print(tailLengthBitStr,end='')
+
+    debug('tailLengthBitStr:', tailLengthBitStr)
 
     # TODO make it '5'
+    debug("tail: ", end='')
     if len(tail) > 0:
         byteWriter(tail, fo)
-        # print(tail,end='')
+        debug(tail,end='')
 
     # then we write the number of encoding tuples GALIMAI PROBLEMA
     dicLengthBitStr = bin(len(dic) - 1)
@@ -206,9 +224,9 @@ if mode == 'e':
     dicLengthBitStr = \
         '0' * (parameter - len(dicLengthBitStr)) + dicLengthBitStr
     byteWriter(dicLengthBitStr, fo)
-    # print(dicLengthBitStr,end='')
+    debug('\ndicLengthBitStr:', dicLengthBitStr)
 
-    # print "dic length", len(dic)
+    debug("dic length:", len(dic), '\n')
 
     for (byteValue, encodingBitStr) in dic.items():
         bitStr = bin(byteValue)
@@ -221,15 +239,17 @@ if mode == 'e':
         encodedLenBitStr = \
             '0' * (parameter - len(encodedLenBitStr)) + encodedLenBitStr
 
-        # print('pre-bitstr', bitStream)
+        debug('pre-bitstr', bitStream)
         byteWriter(encodedLenBitStr, fo)
-        # print('enc', encodedLenBitStr)
+        debug('enc', encodedLenBitStr)
 
         byteWriter(encodingBitStr, fo)
-        # print('post-bitstr', bitStream)
-        # print(bitStr, encodedLenBitStr, encodingBitStr,end='',sep='')
+        debug('post-bitstr', bitStream)
+        debug('encoded dict element: ',
+              bitStr, encodedLenBitStr, encodingBitStr,sep='', end='\n\n')
 
     byteStr = ""
+    debug("encoded letters: ", end='')
     for byte in byteArr:
         bitStrem = BitStream()
         bitStrem.write(byte, int8)
@@ -238,57 +258,57 @@ if mode == 'e':
             word = byteStr[:parameter]
             byteStr = byteStr[parameter:]
             byteWriter(dic[int(word, 2)], fo)
-            # print(dic[int(word,2)], end='')
+            debug(dic[int(word,2)], end='')
+    debug()
 
-    # print()
     nullTail =  8 - len(bitStream)
-    byteWriter('0' * 8, fo)
-    # print('0'*8,end='') # to write the last remaining bits (if any)
-    # print('\n',bitStream)
-    # fo.write(chr(nullTail))
+
+    byteWriter('0' * 8, fo) # to write the last remaining bits (if any)
+    debug('Write last remaining bits (if any):')
+    debug('    bitStr before calling byteWriter:', '0'*8, end='')
+    debug()
+    debug('    bitStream before calling byteWriter:', bitStream)
 
     fo.write(bytes([nullTail]))
-    # print('0'*8, str(bin(nullTail))[2:],sep='')
-    # print()
-    # print("nullTailLength", nullTail)
+    debug('the last byte (with tail): {:08b}'.format(nullTail))
+    debug("nullTailLength:", nullTail, '\n')
     fo.close()
-    print("--- code table {} seconds ---".format(time.time() - mid_time))
+    print("--- code table {} seconds ---\n".format(time.time() - mid_time))
     mid_time = time.time()
-    fileSize = os.path.getsize(outputFile)
-    # fileSize = len(byteArr)
+    fileSize = os.path.getsize(outputFile) # fileSize = len(byteArr)
     if fileSize < 1000:
-        print('Compressed file size {} B'.format(fileSize))
+        print('Compressed file size {} B\n'.format(fileSize))
     elif fileSize < 10**6:
-        print('Compressed file size {} KB'.format(fileSize/10**3))
+        print('Compressed file size {} KB\n'.format(fileSize/10**3))
     else:
-        print('Compressed file size {} MB'.format(fileSize/10**6))
-    print()
+        print('Compressed file size {} MB\n'.format(fileSize/10**6))
 
 # =============================================================================
 # Decoding
 # =============================================================================
 
-# mode = 'd'
-# inputFile = "./encoded.bin"
-# outputFile = "./decoded.txt"
+# example:
+#   mode = 'd'
+#   inputFile = "./encoded.bin"
+#   outputFile = "./decoded.txt"
 
-if mode == 'd': # FILE DECODING
+if mode == 'd':
     bitPosition = 0
     parameter = int(bitReader(5), 2) # First read the parameter
-    # print parameter
+    debug('parameter =', parameter)
     tailLength = int(bitReader(4), 2)
-    # print tailLength
+    debug('tailLength =', tailLength, '\n')
     if tailLength > 0:
         tail = int(bitReader(tailLength), 2)
         tail = bin(tail)
         tail = tail[2:]
         tail = '0' * (tailLength - len(tail)) + tail
-        # print tail
+        debug(tail)
     # then read the number of encoding tuples
     n = int(bitReader(parameter), 2) + 1
-    # print 'Number of encoding tuples:', n
+    debug('Number of encoding tuples:', n)
     dic = dict()
-    # print('par:', parameter, 'tailLen:', tailLength, 'dicLen:',n)
+    debug('par:', parameter, 'tailLen:', tailLength, 'dicLen:', n, '\n')
     if n > 0:
         for i in range(n):
             # read the byteValue
@@ -302,13 +322,12 @@ if mode == 'd': # FILE DECODING
             # m = 3
             # -------
             # read encodingBitStr
-            #print("m=", m)
+            debug("m =", m)
             encodingBitStr = bitReader(m)
             dic[encodingBitStr] = byteValue # add to the dictionary
-            # print('w:', byteValue, 'l:', m, 'c:', encodingBitStr)
-            # print 'The dictionary of encodingBitStr : byteValue pairs:'
-            # print(dic)
-            # print
+            debug('w:', byteValue, 'l:', m, 'c:', encodingBitStr)
+            debug('The dictionary of encodingBitStr : byteValue pairs:')
+            debug(dic, '\n')
 
     # read the encoded data, decode it, write into the output file
     fo = open(outputFile, 'wb')
