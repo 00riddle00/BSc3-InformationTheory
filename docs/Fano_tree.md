@@ -1,3 +1,4 @@
+```
 # orig failas:
 '1' (ascii = 31h = 0011 0001)
 dazniai:
@@ -29,5 +30,4 @@ k=2   tail_len=0
                  |
                  | nuo cia medis prasideda
                  |
-
-
+```
