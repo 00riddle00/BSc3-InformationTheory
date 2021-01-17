@@ -9,7 +9,7 @@ from bitstream import BitStream
 # Shannon-Fano Coding for Lossless Data Compression
 
 # =============================================================================
-# Functions
+# The algorithm
 # =============================================================================
 
 # TODO comment
@@ -44,6 +44,24 @@ def shannon_fano_encoder(iA, iB):
         # do recursive calls for both groups
         shannon_fano_encoder(iA, mid - 1)
         shannon_fano_encoder(mid, iB)
+
+# ===========================================
+# Utility functions
+# ===========================================
+
+# write leaf node to a Fano tree
+#
+# ::param:: tree: a list of 1's and 0's
+# ::param:: tupleList: each tuple describes a unique letter:
+#           [(<frequency>, <decimal_value>, <binary_code>) {, (...)}]
+#           the first element is removed from tupleList, after it's
+#           added to the tree
+#
+def write_leaf(tree, tupleList):
+    letter_in_decimal = tupleList[0][1]
+    letter_in_binary = '{:0{k}b}'.format(letter_in_decimal, k = parameter)
+    tree.append(letter_in_binary)
+    tupleList.pop(0)
 
 # check global variable 'bitStream' (string), if it's more than
 # 8 characters, write chars to a file in groups of 8 (byte),
@@ -213,46 +231,42 @@ if mode == 'e':
     debug('tailLengthBitStr:', tailLengthBitStr)
 
     # TODO make it '5'
-    debug('tail: ', end='')
+    debug("tail: ", end='')
     if len(tail) > 0:
-        debug('tail exists')
         byteWriter(tail, fo)
         debug(tail,end='')
+    else:
+        debug("NONE",end='')
+    debug()
 
-    # then we write the number of encoding tuples GALIMAI PROBLEMA
-    dicLengthBitStr = bin(len(dic) - 1)
-    dicLengthBitStr = dicLengthBitStr[2:]
-    dicLengthBitStr = \
-        '0' * (parameter - len(dicLengthBitStr)) + dicLengthBitStr
-    debug('bitStream bf dic len: ', bitStream)
+    # Building Fano encoding tree
+    #
+    #   encoding works only if there are at least two distinct letters
+    #
+    #   start from the root vertex. '0' at the beginning, meaning that the
+    #   root vertex is not a leaf, will always be true, so it is ommitted.
+    #
+    #   Loop:
+    #     if there are any more nodes left (it will always be true in this step),
+    #     add '1' (meaning that left child is a leaf), and write the child's value
+    #
+    #     if more than 1 node is left, add '0' (meaning the right child is a vertex)
+    #     else, add '1', write the child's value and exit the loop
 
-    byteWriter(dicLengthBitStr, fo)
-    debug('bitStream af dic len: ', bitStream)
-    debug('\ndicLengthBitStr:', dicLengthBitStr)
+    fano_tree = []
 
-    debug('dic length:', len(dic), '\n')
+    while True:
+        fano_tree.append('1') # means that it's a leaf
+        write_leaf(fano_tree, tupleList) # left child
 
-    for (byteValue, encodingBitStr) in dic.items():
-        bitStr = bin(byteValue)
-        bitStr = bitStr[2:]
-        bitStr = '0' * (parameter - len(bitStr)) + bitStr
-        byteWriter(bitStr, fo)
+        if len(tupleList) > 1:
+            fano_tree.append('0')
+        else:
+            fano_tree.append('1')
+            write_leaf(fano_tree, tupleList)
+            break
 
-        encodedLenBitStr = bin(len(encodingBitStr))
-        encodedLenBitStr = encodedLenBitStr[2:]
-        encodedLenBitStr = \
-            '0' * (parameter - len(encodedLenBitStr)) + encodedLenBitStr
-
-        debug('pre-bitstr', bitStream)
-        byteWriter(encodedLenBitStr, fo)
-        debug('enc', encodedLenBitStr)
-
-        debug('bitStream in for loop bf: ', bitStream)
-        byteWriter(encodingBitStr, fo)
-        debug('bitStream in for loop af: ', bitStream)
-        debug('post-bitstr', bitStream)
-        debug('encoded dict element: ',
-              bitStr, encodedLenBitStr, encodingBitStr,sep='', end='\n\n')
+    byteWriter(''.join(fano_tree), fo)
 
     byteStr = ''
     debug('encoded letters: ', end='')

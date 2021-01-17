@@ -9,7 +9,7 @@ from bitstream import BitStream
 # Shannon-Fano Coding for Lossless Data Compression
 
 # =============================================================================
-# Functions
+# The algorithm
 # =============================================================================
 
 # TODO comment
@@ -44,6 +44,10 @@ def shannon_fano_encoder(iA, iB):
         # do recursive calls for both groups
         shannon_fano_encoder(iA, mid - 1)
         shannon_fano_encoder(mid, iB)
+
+# ===========================================
+# Utility functions
+# ===========================================
 
 # check global variable 'bitStream' (string), if it's more than
 # 8 characters, write chars to a file in groups of 8 (byte),
@@ -213,13 +217,15 @@ if mode == 'e':
     debug('tailLengthBitStr:', tailLengthBitStr)
 
     # TODO make it '5'
-    debug('tail: ', end='')
+    debug("tail: ", end='')
     if len(tail) > 0:
-        debug('tail exists')
         byteWriter(tail, fo)
         debug(tail,end='')
+    else:
+        debug("NONE",end='')
+    debug()
 
-    # then we write the number of encoding tuples GALIMAI PROBLEMA
+    # then we write the number of encoding tuples
     dicLengthBitStr = bin(len(dic) - 1)
     dicLengthBitStr = dicLengthBitStr[2:]
     dicLengthBitStr = \
