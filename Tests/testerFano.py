@@ -86,7 +86,8 @@ def bitReader(n):
 # =============================================================================
 
 if len(sys.argv) < 4:
-    print('Usage: ShannonFano.py [e|d] [path]InputFileName [path]OutputFileName parameter')
+    print('Usage: ShannonFano.py [e|d] '
+          '[path]InputFileName [path]OutputFileName parameter')
     exit()
 mode = sys.argv[1] # encoding/decoding
 
@@ -183,7 +184,8 @@ if mode == 'e':
 
     parameterBitStr = bin(parameter) # first we write the parameter
     parameterBitStr = parameterBitStr[2:] # remove 0b
-    parameterBitStr = '0' * (5 - len(parameterBitStr)) + parameterBitStr # add 0's if needed for 5 bits
+    # add 0's if needed for 5 bits
+    parameterBitStr = '0' * (5 - len(parameterBitStr)) + parameterBitStr
     byteWriter(parameterBitStr, fo)
     # print(parameterBitStr,end='')
 
@@ -198,9 +200,11 @@ if mode == 'e':
         byteWriter(tail, fo)
         # print(tail,end='')
 
-    dicLengthBitStr = bin(len(dic) - 1) # then we write the number of encoding tuples GALIMAI PROBLEMA
+    # then we write the number of encoding tuples GALIMAI PROBLEMA
+    dicLengthBitStr = bin(len(dic) - 1)
     dicLengthBitStr = dicLengthBitStr[2:]
-    dicLengthBitStr = '0' * (parameter - len(dicLengthBitStr)) + dicLengthBitStr
+    dicLengthBitStr = \
+        '0' * (parameter - len(dicLengthBitStr)) + dicLengthBitStr
     byteWriter(dicLengthBitStr, fo)
     # print(dicLengthBitStr,end='')
 
@@ -214,7 +218,8 @@ if mode == 'e':
 
         encodedLenBitStr = bin(len(encodingBitStr))
         encodedLenBitStr = encodedLenBitStr[2:]
-        encodedLenBitStr = '0' * (parameter - len(encodedLenBitStr)) + encodedLenBitStr
+        encodedLenBitStr = \
+            '0' * (parameter - len(encodedLenBitStr)) + encodedLenBitStr
 
         # print('pre-bitstr', bitStream)
         byteWriter(encodedLenBitStr, fo)
@@ -279,7 +284,8 @@ if mode == 'd': # FILE DECODING
         tail = tail[2:]
         tail = '0' * (tailLength - len(tail)) + tail
         # print tail
-    n = int(bitReader(parameter), 2) + 1 # then read the number of encoding tuples
+    # then read the number of encoding tuples
+    n = int(bitReader(parameter), 2) + 1
     # print 'Number of encoding tuples:', n
     dic = dict()
     # print('par:', parameter, 'tailLen:', tailLength, 'dicLen:',n)
