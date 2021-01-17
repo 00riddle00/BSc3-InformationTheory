@@ -215,6 +215,7 @@ if mode == 'e':
     # TODO make it '5'
     debug("tail: ", end='')
     if len(tail) > 0:
+        print("tail exists")
         byteWriter(tail, fo)
         debug(tail,end='')
 
@@ -223,7 +224,10 @@ if mode == 'e':
     dicLengthBitStr = dicLengthBitStr[2:]
     dicLengthBitStr = \
         '0' * (parameter - len(dicLengthBitStr)) + dicLengthBitStr
+    print("bitStream bf dic len: ", bitStream)
+
     byteWriter(dicLengthBitStr, fo)
+    print("bitStream af dic len: ", bitStream)
     debug('\ndicLengthBitStr:', dicLengthBitStr)
 
     debug("dic length:", len(dic), '\n')
@@ -243,7 +247,9 @@ if mode == 'e':
         byteWriter(encodedLenBitStr, fo)
         debug('enc', encodedLenBitStr)
 
+        print("bitStream in for loop bf: ", bitStream)
         byteWriter(encodingBitStr, fo)
+        print("bitStream in for loop af: ", bitStream)
         debug('post-bitstr', bitStream)
         debug('encoded dict element: ',
               bitStr, encodedLenBitStr, encodingBitStr,sep='', end='\n\n')
@@ -260,6 +266,8 @@ if mode == 'e':
             byteWriter(dic[int(word, 2)], fo)
             debug(dic[int(word,2)], end='')
     debug()
+
+    print("bitStream before nullTail: ", bitStream)
 
     nullTail =  8 - len(bitStream)
 
@@ -340,6 +348,7 @@ if mode == 'd':
             break
         encodingBitStr += bit
         if encodingBitStr in dic:
+            print("encBitStr: ", encodingBitStr)
             byteValue = dic[encodingBitStr]
             byteWriter(byteValue, fo)
             encodingBitStr = ''
@@ -351,15 +360,22 @@ if mode == 'd':
     for i in range(byteArr[len(byteArr) - 1]):
         lastByte = lastByte[:-1]
 
+    print("lastByte: ", lastByte)
+
     for bit in lastByte:
+        print("bit: ", bit)
         encodingBitStr += bit
         if encodingBitStr in dic:
+            print("encBitStr: ", encodingBitStr)
             byteValue = dic[encodingBitStr]
             byteWriter(byteValue, fo)
             encodingBitStr = ''
 
     if tailLength > 0:
+        print("tailLength > 0")
         byteWriter(tail, fo)
+
+    print("bitStream bf last:write ", bitStream)
 
     byteWriter('0' * 8, fo)
     fo.close()
