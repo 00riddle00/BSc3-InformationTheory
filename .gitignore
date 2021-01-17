@@ -1,4 +1,4 @@
 env/
 temp/
-Tests/Results/**/encoded*.bin
-Tests/Results/**/decoded*.*
+tests/results/**/encoded*.bin
+tests/results/**/decoded*.*
