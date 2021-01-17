@@ -207,7 +207,6 @@ if mode == 'e':
           tupleList, '\n')
 
     dic = dict([(tup[1], tup[2]) for tup in tupleList])
-    del tupleList # unneeded anymore
 
     debug('The dictionary of byteValue : encodingBitStr pairs:\n', dic, '\n')
 
