@@ -1,13 +1,22 @@
 #!/usr/bin/env python3
+
 import sys
 import os
-from bitstream import BitStream
-from numpy import *
 import time
+from numpy import int8
+from bitstream import BitStream
 
 # Shannon-Fano Coding for Lossless Data Compression
 
-def shannon_fano_encoder(iA, iB): # iA to iB : index interval
+# =============================================================================
+# Functions
+# =============================================================================
+
+# TODO comment
+#
+# ::param:: iA, iB - index interval
+#
+def shannon_fano_encoder(iA, iB):
   global tupleList
   size = iB - iA + 1
   if size > 1:
@@ -37,6 +46,15 @@ def shannon_fano_encoder(iA, iB): # iA to iB : index interval
     shannon_fano_encoder(iA, mid - 1)
     shannon_fano_encoder(mid, iB)
 
+# check global variable 'bitStream' (string), if it's more than
+# 8 characters, write chars to a file in groups of 8 (byte),
+# until 'bitStream' is less than 8 chars. 'bitStream' variable
+# is always less than 8 after the execution of 'byteWriter'
+#
+# ::param:: bitStr - a string to add to 'bitStream' at the
+#           start of the function
+# ::param:: outputFile
+#
 def byteWriter(bitStr, outputFile):
   global bitStream
   bitStream += bitStr
@@ -45,7 +63,11 @@ def byteWriter(bitStr, outputFile):
     bitStream = bitStream[8:]
     outputFile.write(bytes([int(byteStr, 2)]))
 
-def bitReader(n): # number of bits to read
+# TODO comment
+#
+# ::param:: n - number of bits to read
+#
+def bitReader(n):
   global byteArr
   global bitPosition
   bitStr = ''
@@ -60,24 +82,23 @@ def bitReader(n): # number of bits to read
     bitPosition += 1 # prepare to read the next bit
   return bitStr
 
+# =============================================================================
+# File input
+# =============================================================================
+
 if len(sys.argv) < 4:
   print('Usage: ShannonFano.py [e|d] [path]InputFileName [path]OutputFileName parameter')
   exit()
 mode = sys.argv[1] # encoding/decoding
 
+if mode not in ['e', 'd']:
+    sys.exit("ERROR: Mode is not one of 'e' (encoding) or 'd' (decoding)")
+
 inputFile = sys.argv[2]
 outputFile = sys.argv[3]
 
-# mode = 'e'
-# inputFile = "./input.txt"
-# outputFile = "./encoded.bin"
-
-# mode = 'd'
-# inputFile = "./encoded.bin"
-# outputFile = "./decoded.txt"
-
 if os.stat(inputFile).st_size == 0:
-  sys.exit("The provided file is empty!")
+    sys.exit("ERROR: The provided file is empty!")
 
 fileSize = os.path.getsize(inputFile)
 fi = open(inputFile, 'rb')
@@ -85,6 +106,7 @@ byteArr = bytearray(fi.read(fileSize))
 
 fi.close()
 fileSize = len(byteArr)
+
 if fileSize < 1000:
   print('Input file size {} B'.format(fileSize))
 elif fileSize < 10**6:
@@ -96,14 +118,21 @@ print()
 start_time = time.time()
 mid_time = time.time()
 
-if mode == 'e': # FILE ENCODING
+# =============================================================================
+# Encoding
+# =============================================================================
 
+# mode = 'e'
+# inputFile = "./input.txt"
+# outputFile = "./encoded.bin"
+
+if mode == 'e':
   parameter = int(sys.argv[4])
   # parameter = 2
   # freqList[5] = 5      0101 is found 5 times
   # array index is the bit that is needed and the value is it's frequency
 
-  freqList = [0] * 2**parameter #galima kažkaip optimizint
+  freqList = [0] * 2**parameter # galima kažkaip optimizint
   byteStr = ""
   for byte in byteArr:
     bitStrem = BitStream()
@@ -114,7 +143,8 @@ if mode == 'e': # FILE ENCODING
       byteStr = byteStr[parameter:]
       freqList[int(word, 2)] += 1
 
-  # The leftovers from the file that don't fit in the parameter will be stored as a tail
+  # The leftovers from the file that don't fit
+  # in the parameter will be stored as a tail
   tail = ''
   if len(byteStr) > 0:
     tail = byteStr
@@ -164,6 +194,7 @@ if mode == 'e': # FILE ENCODING
   byteWriter(tailLengthBitStr, fo)
   # print(tailLengthBitStr,end='')
 
+  # TODO make it '5'
   if len(tail) > 0:
     byteWriter(tail, fo)
     # print(tail,end='')
@@ -228,10 +259,15 @@ if mode == 'e': # FILE ENCODING
     print('Compressed file size {} MB'.format(fileSize/10**6))
   print()
 
+# =============================================================================
+# Decoding
+# =============================================================================
 
-#############################################
+# mode = 'd'
+# inputFile = "./encoded.bin"
+# outputFile = "./decoded.txt"
 
-elif mode == 'd': # FILE DECODING
+if mode == 'd': # FILE DECODING
   bitPosition = 0
   parameter = int(bitReader(5), 2) # First read the parameter
   # print parameter
@@ -254,7 +290,6 @@ elif mode == 'd': # FILE DECODING
       byteValue = bin(byteValue)
       byteValue = byteValue[2:]
       byteValue = '0' * (parameter - len(byteValue)) + byteValue
-
 
       m = int(bitReader(parameter), 2) # m = kodo ilgis
       # -------
