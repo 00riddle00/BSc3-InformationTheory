@@ -111,13 +111,13 @@ if len(sys.argv) < 4:
 mode = sys.argv[1] # encoding/decoding
 
 if mode not in ['e', 'd']:
-    sys.exit("ERROR: Mode is not one of 'e' (encoding) or 'd' (decoding)")
+    sys.exit("InputError: Mode is not one of 'e' (encoding) or 'd' (decoding)")
 
 inputFile = sys.argv[2]
 outputFile = sys.argv[3]
 
 if os.stat(inputFile).st_size == 0:
-    sys.exit('ERROR: The provided file is empty!')
+    sys.exit('InputError: The provided file is empty!')
 
 fileSize = os.path.getsize(inputFile)
 fi = open(inputFile, 'rb')
@@ -238,7 +238,9 @@ if mode == 'e':
         debug("NONE",end='')
     debug()
 
-    # Building Fano encoding tree
+    # -------------------------------------------------------------------------
+    # Build encoding tree
+    # -------------------------------------------------------------------------
     #
     #   encoding works only if there are at least two distinct letters
     #
@@ -246,12 +248,12 @@ if mode == 'e':
     #   root vertex is not a leaf, will always be true, so it is ommitted.
     #
     #   Loop:
-    #     if there are any more nodes left (it will always be true in this step),
-    #     add '1' (meaning that left child is a leaf), and write the child's value
+    #     if there are any more nodes left (it'll always be true in this step),
+    #     add '1' (means that left child is a leaf) and write the child's value
     #
-    #     if more than 1 node is left, add '0' (meaning the right child is a vertex)
+    #     if more than 1 node is left, add '0' (means right child is a vertex)
     #     else, add '1', write the child's value and exit the loop
-
+    #
     fano_tree = []
 
     while True:
@@ -266,6 +268,7 @@ if mode == 'e':
             break
 
     byteWriter(''.join(fano_tree), fo)
+    # -------------------------------------------------------------------------
 
     byteStr = ''
     debug('encoded letters: ', end='')
@@ -325,27 +328,37 @@ if mode == 'd':
         tail = tail[2:]
         tail = '0' * (tailLength - len(tail)) + tail
         debug(tail)
-    # then read the number of encoding tuples
-    n = int(bitReader(parameter), 2) + 1
-    debug('Number of encoding tuples:', n)
-    dic = dict()
-    debug('par:', parameter, 'tailLen:', tailLength, 'dicLen:', n, '\n')
-    if n > 0:
-        for i in range(n):
-            # read the byteValue
-            byteValue = bitReader(parameter)
 
-            m = int(bitReader(parameter), 2) # m = kodo ilgis
-            # -------
-            # m = 3
-            # -------
-            # read encodingBitStr
-            debug('m =', m)
-            encodingBitStr = bitReader(m)
-            dic[encodingBitStr] = byteValue # add to the dictionary
-            debug('w:', byteValue, 'l:', m, 'c:', encodingBitStr)
-            debug('The dictionary of encodingBitStr : byteValue pairs:')
-            debug(dic, '\n')
+    # -------------------------------------------------------------------------
+    # Decoding the tree
+    # -------------------------------------------------------------------------
+
+    dic = dict()
+    code = [] #  a letter's code
+
+    while True:
+        left_child = int(bitReader(1)) # 0 = not a leaf, 1 = leaf
+
+        # left_child == 1 (always)
+        lcode = '{}0'.format(''.join(code))
+        dic[lcode] = bitReader(parameter)
+
+        right_child = int(bitReader(1))
+
+        if right_child == 1:
+            lcode = '{}1'.format(''.join(code))
+            dic[lcode] = bitReader(parameter)
+            break
+        elif right_child == 0:
+            code.append('1')
+            continue
+        else:
+            sys.exit("DecodingError: cannot decode the tree")
+
+    debug('The dictionary of encodingBitStr : byteValue pairs:')
+    debug(dic, '\n')
+
+    # -------------------------------------------------------------------------
 
     # read the encoded data, decode it, write into the output file
     fo = open(outputFile, 'wb')
