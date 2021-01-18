@@ -334,9 +334,6 @@ if mode == 'd':
         for i in range(n):
             # read the byteValue
             byteValue = int(bitReader(parameter), 2)
-            byteValue = bin(byteValue)
-            byteValue = byteValue[2:]
-            byteValue = '0' * (parameter - len(byteValue)) + byteValue
 
             m = int(bitReader(parameter), 2) # m = kodo ilgis
             # -------
