@@ -66,46 +66,6 @@ def write_leaf(tree, tupleList):
 def to_str(param):
     return ''.join(param)
 
-# Encoding tree
-#
-def encode_tree(code):
-    code.append('0')
-    node = ''
-
-    for c in codes:
-        if c.startswith(to_str(code)):
-            node = c
-            break
-
-    if len(node) != len(to_str(code)):
-        fano_tree.append('0') # left child is not a leaf
-        encode_tree(code) # go into left recursion from left node
-        code.pop()
-    else:
-        fano_tree.append('1') # left child is a leaf
-        write_leaf(fano_tree, tupleList)
-        codes.remove(node)
-        code.pop()
-
-    code.append('1')
-    node = ''
-
-    for c in codes:
-        if c.startswith(to_str(code)):
-            node = c
-            break
-
-    if len(node) != len(to_str(code)):
-        fano_tree.append('0') # right child is not a leaf
-        encode_tree(code) # go into left recursion from right node
-    else:
-        fano_tree.append('1') # right child is a leaf
-        write_leaf(fano_tree, tupleList)
-        codes.remove(node)
-        code.pop()
-
-    return
-
 # Decoding the tree
 #
 def decode_tree(code):
@@ -312,10 +272,79 @@ if mode == 'e':
 
     # -------------------------------------------------------------------------
     # Encoding tree
+
+    stack = []
     fano_tree = []
     codes =[(tup[2]) for tup in tupleList]
     code = []
-    encode_tree(code)
+
+    while True:
+        # go left
+        code.append('0')
+        node = ''
+
+        for c in codes:
+            if c.startswith(to_str(code)):
+                node = c
+                break
+
+        if len(node) != len(to_str(code)):
+            fano_tree.append('0') # left child is not a leaf
+            stack.append(code) # add current code to stack
+            continue
+        else:
+            fano_tree.append('1') # left child is a leaf
+            write_leaf(fano_tree, tupleList)
+            codes.remove(node)
+            code.pop()
+
+        if stack:
+            code = stack.pop()
+
+        # go right
+        code.append('1')
+        node = ''
+
+        for c in codes:
+            if c.startswith(to_str(code)):
+                node = c
+                break
+
+        if len(node) != len(to_str(code)):
+            fano_tree.append('0') # right child is not a leaf
+            stack.append(code) # add current code to stack
+            continue
+        else:
+            fano_tree.append('1') # right child is a leaf
+            write_leaf(fano_tree, tupleList)
+            codes.remove(node)
+            code.pop()
+
+            if not codes:
+                break
+
+            if code:
+                code.pop()
+
+            if not code and not stack:
+
+                # go right
+                code.append('1')
+                node = ''
+
+                for c in codes:
+                    if c.startswith(to_str(code)):
+                        node = c
+                        break
+
+                if len(node) != len(to_str(code)):
+                    fano_tree.append('0') # right child is not a leaf
+                    stack.append(code) # do code.pop() ?? turbut cia jau ne
+                    continue
+                else:
+                    fano_tree.append('1') # right child is a leaf
+                    write_leaf(fano_tree, tupleList)
+                    break
 
     byteWriter(''.join(fano_tree), fo)
     # -------------------------------------------------------------------------
