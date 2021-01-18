@@ -63,6 +63,78 @@ def write_leaf(tree, tupleList):
     tree.append(letter_in_binary)
     tupleList.pop(0)
 
+def to_str(param):
+    return ''.join(param)
+
+# Encoding tree
+#
+def encode_tree(code):
+    code.append('0')
+    node = ''
+
+    for c in codes:
+        if c.startswith(to_str(code)):
+            node = c
+            break
+
+    if len(node) != len(to_str(code)):
+        fano_tree.append('0') # left child is not a leaf
+        encode_tree(code) # go into left recursion from left node
+        code.pop()
+    else:
+        fano_tree.append('1') # left child is a leaf
+        write_leaf(fano_tree, tupleList)
+        codes.remove(node)
+        code.pop()
+
+    code.append('1')
+    node = ''
+
+    for c in codes:
+        if c.startswith(to_str(code)):
+            node = c
+            break
+
+    if len(node) != len(to_str(code)):
+        fano_tree.append('0') # right child is not a leaf
+        encode_tree(code) # go into left recursion from right node
+    else:
+        fano_tree.append('1') # right child is a leaf
+        write_leaf(fano_tree, tupleList)
+        codes.remove(node)
+        code.pop()
+
+    return
+
+# Decoding the tree
+#
+def decode_tree(code):
+    left_child = int(bitReader(1))
+
+    if left_child == 1:
+        code.append('0')
+        dic[''.join(code)] = bitReader(parameter)
+        code.pop()
+    elif left_child == 0:
+        code.append('0')
+        decode_tree(code)
+
+    right_child = int(bitReader(1))
+
+    if right_child == 1:
+        code.append('1')
+        dic[''.join(code)] = bitReader(parameter)
+        code.pop()
+        if code:
+            code.pop()
+    elif right_child == 0:
+        code.append('1')
+        decode_tree(code)
+    else:
+        sys.exit("DecodingError: cannot decode the tree")
+
+    return
+
 # check global variable 'bitStream' (string), if it's more than
 # 8 characters, write chars to a file in groups of 8 (byte),
 # until 'bitStream' is less than 8 chars. 'bitStream' variable
@@ -144,7 +216,7 @@ mid_time = time.time()
 # Encoding
 # =============================================================================
 
-DEBUG = True
+DEBUG = False
 
 def debug(*args, **kwargs):
     if DEBUG:
@@ -239,33 +311,11 @@ if mode == 'e':
     debug()
 
     # -------------------------------------------------------------------------
-    # Build encoding tree
-    # -------------------------------------------------------------------------
-    #
-    #   encoding works only if there are at least two distinct letters
-    #
-    #   start from the root vertex. '0' at the beginning, meaning that the
-    #   root vertex is not a leaf, will always be true, so it is ommitted.
-    #
-    #   Loop:
-    #     if there are any more nodes left (it'll always be true in this step),
-    #     add '1' (means that left child is a leaf) and write the child's value
-    #
-    #     if more than 1 node is left, add '0' (means right child is a vertex)
-    #     else, add '1', write the child's value and exit the loop
-    #
+    # Encoding tree
     fano_tree = []
-
-    while True:
-        fano_tree.append('1') # means that it's a leaf
-        write_leaf(fano_tree, tupleList) # left child
-
-        if len(tupleList) > 1:
-            fano_tree.append('0')
-        else:
-            fano_tree.append('1')
-            write_leaf(fano_tree, tupleList)
-            break
+    codes =[(tup[2]) for tup in tupleList]
+    code = []
+    encode_tree(code)
 
     byteWriter(''.join(fano_tree), fo)
     # -------------------------------------------------------------------------
@@ -331,33 +381,13 @@ if mode == 'd':
 
     # -------------------------------------------------------------------------
     # Decoding the tree
-    # -------------------------------------------------------------------------
 
     dic = dict()
-    code = [] #  a letter's code
-
-    while True:
-        left_child = int(bitReader(1)) # 0 = not a leaf, 1 = leaf
-
-        # left_child == 1 (always)
-        lcode = '{}0'.format(''.join(code))
-        dic[lcode] = bitReader(parameter)
-
-        right_child = int(bitReader(1))
-
-        if right_child == 1:
-            lcode = '{}1'.format(''.join(code))
-            dic[lcode] = bitReader(parameter)
-            break
-        elif right_child == 0:
-            code.append('1')
-            continue
-        else:
-            sys.exit("DecodingError: cannot decode the tree")
+    code = []
+    decode_tree(code)
 
     debug('The dictionary of encodingBitStr : byteValue pairs:')
     debug(dic, '\n')
-
     # -------------------------------------------------------------------------
 
     # read the encoded data, decode it, write into the output file
