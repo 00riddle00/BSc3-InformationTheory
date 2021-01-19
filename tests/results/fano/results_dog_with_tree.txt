@@ -9,11 +9,11 @@ k=2
 
 Compressed file size 89.734 KB
 
-Execution time: 1.1869261264801025 seconds
+Execution time:  1.4212393760681152 seconds
 
 --decoding--
 
-[FAILED]
+Execution time: 1.0945937633514404 seconds
 
 
 k=3

@@ -1,0 +1,18 @@
+
+Input file size 4.3200MB
+
+# ===================================================
+# Results with Tree
+# ===================================================
+
+k=16
+--encoding--
+
+Compressed file size 270.033 KB
+
+Execution time: 52.82473564147949 seconds
+
+--decoding--
+
+Execution time: 6.583385467529297 seconds
+
