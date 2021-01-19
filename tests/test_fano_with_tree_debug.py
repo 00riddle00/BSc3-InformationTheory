@@ -147,6 +147,12 @@ mid_time = time.time()
 # Encoding
 # =============================================================================
 
+DEBUG = True
+
+def debug(*args, **kwargs):
+    if DEBUG:
+        print(*args, **kwargs)
+
 # example:
 #   mode = 'e'
 #   inputFile = './input.txt'
@@ -177,6 +183,8 @@ if mode == 'e':
     if len(byteStr) > 0:
         tail = byteStr
 
+    debug('Tail: ', tail, '\n')
+
     # create a list of (frequency, byteValue, encodingBitStr) tuples
     tupleList = []
     for b in range(2**parameter):
@@ -186,15 +194,24 @@ if mode == 'e':
     # sort the list according to the frequencies descending
     tupleList = sorted(tupleList, key=lambda tup: tup[0], reverse = True)
 
+    debug('tupleList: ', tupleList, '\n')
+
     print('--- bitifying {} seconds ---\n'.format(time.time() - mid_time))
     mid_time = time.time()
 
     shannon_fano_encoder(0, len(tupleList) - 1)
 
+    debug('bitified tupleList: ', tupleList, '\n')
+
     print('--- encoding {} seconds ---'.format(time.time() - mid_time))
     mid_time = time.time()
 
+    debug('\nThe list of (frequency, byteValue, encodingBitStr) tuples:\n',
+          tupleList, '\n')
+
     dic = dict([(tup[1], tup[2]) for tup in tupleList])
+
+    debug('The dictionary of byteValue : encodingBitStr pairs:\n', dic, '\n')
 
     # write a list of (byteValue,3-bit(len(encodingBitStr)-1),encodingBitStr)
     # tuples as the compressed file header
@@ -206,15 +223,23 @@ if mode == 'e':
     # add 0's if needed for 5 bits
     parameterBitStr = '0' * (5 - len(parameterBitStr)) + parameterBitStr
     byteWriter(parameterBitStr, fo)
+    debug('parameterBitStr:', parameterBitStr)
 
     tailLengthBitStr = bin(len(tail)) # then we write the length of the tail
     tailLengthBitStr = tailLengthBitStr[2:]
     tailLengthBitStr = '0' * (4 - len(tailLengthBitStr)) + tailLengthBitStr
     byteWriter(tailLengthBitStr, fo)
 
+    debug('tailLengthBitStr:', tailLengthBitStr)
+
     # TODO make it '5'
+    debug("tail: ", end='')
     if len(tail) > 0:
         byteWriter(tail, fo)
+        debug(tail,end='')
+    else:
+        debug("NONE",end='')
+    debug()
 
     # -------------------------------------------------------------------------
     # Encoding the tree
@@ -303,6 +328,7 @@ if mode == 'e':
     # -------------------------------------------------------------------------
 
     byteStr = ''
+    debug('encoded letters: ', end='')
     for byte in byteArr:
         bitStrem = BitStream()
         bitStrem.write(byte, int8)
@@ -311,12 +337,22 @@ if mode == 'e':
             word = byteStr[:parameter]
             byteStr = byteStr[parameter:]
             byteWriter(dic[int(word, 2)], fo)
+            debug(dic[int(word,2)], end='')
+    debug()
+
+    debug('bitStream before nullTail: ', bitStream)
 
     nullTail =  8 - len(bitStream)
 
     byteWriter('0' * 8, fo) # to write the last remaining bits (if any)
+    debug('Write last remaining bits (if any):')
+    debug('    bitStr before calling byteWriter:', '0'*8, end='')
+    debug()
+    debug('    bitStream before calling byteWriter:', bitStream)
 
     fo.write(bytes([nullTail]))
+    debug('the last byte (with tail): {:08b}'.format(nullTail))
+    debug('nullTailLength:', nullTail, '\n')
     fo.close()
     print('--- code table {} seconds ---\n'.format(time.time() - mid_time))
     mid_time = time.time()
@@ -340,12 +376,15 @@ if mode == 'e':
 if mode == 'd':
     bitPosition = 0
     parameter = int(bitReader(5), 2) # First read the parameter
+    debug('parameter =', parameter)
     tailLength = int(bitReader(4), 2)
+    debug('tailLength =', tailLength, '\n')
     if tailLength > 0:
         tail = int(bitReader(tailLength), 2)
         tail = bin(tail)
         tail = tail[2:]
         tail = '0' * (tailLength - len(tail)) + tail
+        debug(tail)
 
     # -------------------------------------------------------------------------
     # Decoding the tree
@@ -413,6 +452,9 @@ if mode == 'd':
                     dic[''.join(code)] = bitReader(parameter)
                     break
 
+    debug('\nThe dictionary of encodingBitStr : byteValue pairs:')
+    debug(dic, '\n')
+
     # -------------------------------------------------------------------------
 
     # read the encoded data, decode it, write into the output file
@@ -426,6 +468,7 @@ if mode == 'd':
             break
         encodingBitStr += bit
         if encodingBitStr in dic:
+            debug('encBitStr: ', encodingBitStr)
             byteValue = dic[encodingBitStr]
             byteWriter(byteValue, fo)
             encodingBitStr = ''
@@ -437,15 +480,22 @@ if mode == 'd':
     for i in range(byteArr[len(byteArr) - 1]):
         lastByte = lastByte[:-1]
 
+    debug('lastByte: ', lastByte)
+
     for bit in lastByte:
+        debug('bit: ', bit)
         encodingBitStr += bit
         if encodingBitStr in dic:
+            debug('encBitStr: ', encodingBitStr)
             byteValue = dic[encodingBitStr]
             byteWriter(byteValue, fo)
             encodingBitStr = ''
 
     if tailLength > 0:
+        debug('tailLength > 0')
         byteWriter(tail, fo)
+
+    debug('bitStream bf last:write ', bitStream)
 
     byteWriter('0' * 8, fo)
     fo.close()
