@@ -2,3 +2,4 @@ env/
 temp/
 tests/results/**/encoded*.bin
 tests/results/**/decoded*.*
+__pycache__/
