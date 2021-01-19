@@ -1,0 +1,76 @@
+
+Input file size 6.7906MB
+
+# ===================================================
+# Results with Tree: gray.bmp
+# ===================================================
+
+k=2
+--encoding--
+
+Compressed file size 7.19723 MB
+
+Execution time: 104.5497100353241 seconds
+
+--decoding
+
+Executon time: 84.56151700019836 seconds
+
+
+k=3
+--encoding--
+
+Compressed file size 6.912266 MB
+
+Execution time: 93.7651252746582 seconds
+
+--decoding--
+
+Executon time: 79.94305515289307 seconds
+
+
+k=4
+--encoding--
+
+Compressed file size 6.690608 MB
+
+Execution time: 84.34625935554504 seconds
+
+--decoding--
+
+Execution time: 75.87102389335632 seconds
+
+
+k=8
+--encoding--
+
+Compressed file size 6.379563 MB
+
+Execution time: 75.59392809867859 seconds
+
+--decoding--
+
+Execution time: 70.1479709148407 seconds
+
+k=16
+--encoding--
+
+Compressed file size 3.761825 MB
+
+Execution time: 74.18745493888855 seconds
+
+--decoding--
+
+Execution time: 43.58213520050049 seconds
+
+
+k=24
+--encoding--
+
+Compressed file size 2.127301 MB
+
+Execution time: 72.41950964927673 seconds
+
+--decoding--
+
+Execution time: 26.31494116783142 seconds

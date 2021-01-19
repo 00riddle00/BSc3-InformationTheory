@@ -1,7 +1,7 @@
 Input file size 80.4570KB
 
 # ===================================================
-# Results with Tree
+# Results with Tree: dog.png
 # ===================================================
 
 k=2
@@ -9,17 +9,17 @@ k=2
 
 Compressed file size 89.734 KB
 
-Execution time:  1.4212393760681152 seconds
+Execution time: 1.2730581760406494 seconds
 
 --decoding--
 
-Execution time: 1.0945937633514404 seconds
+Execution time: 1.0344877243041992 seconds
 
 
 k=3
 --encoding--
 
-Compressed file size 83.341 KB
+Compressed file size 83.342 KB
 
 Execution time: 1.1335101127624512 seconds
 
@@ -33,8 +33,89 @@ k=4
 
 Compressed file size 83.923 KB
 
-Execution time: 1.0262012481689453 seconds
+Execution time: 1.0654921531677246 seconds
 
 --decoding--
 
-Execution time: 0.924614667892456 seconds
+Execution time: 0.9393222332000732 seconds
+
+
+k=8
+--encoding--
+
+Compressed file size 82.524 KB
+
+Execution time: 0.9276118278503418 seconds
+
+--decoding--
+
+Execution time: 0.9696791172027588 seconds
+
+
+k=12
+--encoding--
+
+Compressed file size 87.496 KB
+
+Execution time: 1.06937837600708 seconds
+
+--decoding--
+
+Execution time: 0.9370591640472412 seconds
+
+
+k=16
+--encoding--
+
+Compressed file size 138.666 KB
+
+Execution time: 2.3369932174682617 seconds
+
+--decoding--
+
+Execution time: 1.3699877262115479 seconds
+
+
+k=20
+--encoding--
+
+Compressed file size 146.171 KB
+
+Execution time: 3.2258810997009277 seconds
+
+--decoding--
+
+Execution time: 1.407541275024414 seconds
+
+
+k=24
+--encoding--
+
+Compressed file size 135.501 KB
+
+Execution time: 4.223286151885986 seconds
+
+--decoding--
+
+Execution time: 1.2470104694366455 seconds
+
+
+k=30
+--encoding--
+
+Compressed file size 124.335 KB
+
+Execution time: 88.63610529899597 seconds
+
+--decoding--
+
+Execution time: 1.0550734996795654 seconds
+
+
+k=31
+[encoding crashes (silently?)]
+
+
+k=32
+[MemoryError raised in Python]
+

@@ -129,7 +129,7 @@ mid_time = time.time()
 # Encoding
 # =============================================================================
 
-DEBUG = True
+DEBUG = False
 
 def debug(*args, **kwargs):
     if DEBUG:
@@ -210,7 +210,7 @@ if mode == 'e':
 
     tailLengthBitStr = bin(len(tail)) # then we write the length of the tail
     tailLengthBitStr = tailLengthBitStr[2:]
-    tailLengthBitStr = '0' * (4 - len(tailLengthBitStr)) + tailLengthBitStr
+    tailLengthBitStr = '0' * (5 - len(tailLengthBitStr)) + tailLengthBitStr
     byteWriter(tailLengthBitStr, fo)
 
     debug('tailLengthBitStr:', tailLengthBitStr)
@@ -309,7 +309,7 @@ if mode == 'd':
     bitPosition = 0
     parameter = int(bitReader(5), 2) # First read the parameter
     debug('parameter =', parameter)
-    tailLength = int(bitReader(4), 2)
+    tailLength = int(bitReader(5), 2)
     debug('tailLength =', tailLength, '\n')
     if tailLength > 0:
         tail = int(bitReader(tailLength), 2)

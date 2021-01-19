@@ -2,17 +2,78 @@
 Input file size 4.3200MB
 
 # ===================================================
-# Results with Tree
+# Results with Tree: black.bmp
 # ===================================================
+
+k=2
+--encoding--
+
+Compressed file size 2.16004 MB
+
+Execution time: 62.13408946990967 seconds 
+
+--decoding--
+
+Execution time: 29.741788387298584 seconds
+
+
+k=3
+--encoding--
+
+Compressed file size 1.440035 MB
+
+Execution time: 56.98797249794006 seconds
+
+--decoding--
+
+Execution time: 20.68799662590027 seconds
+
+
+k=4
+--encoding--
+
+Compressed file size 1.080033 MB
+
+Execution time: 50.7949161529541 seconds
+
+--decoding--
+
+Execution time: 16.27181577682495 seconds
+
+
+k=8
+--encoding--
+
+Compressed file size 540.029 KB
+
+Execution time: 48.92157196998596 seconds
+
+--decoding--
+
+Execution time: 9.412814855575562 seconds
+
 
 k=16
 --encoding--
 
 Compressed file size 270.033 KB
 
-Execution time: 52.82473564147949 seconds
+Execution time: 43.95457625389099 seconds
 
 --decoding--
 
-Execution time: 6.583385467529297 seconds
+Execution time: 5.950337648391724 seconds
+
+
+k=24
+--encoding--
+
+Compressed file size 180.045 KB
+
+Execution time: 48.42222595214844 seconds
+
+--decoding--
+
+Execution time: 4.887499570846558 seconds
+
 

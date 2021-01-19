@@ -1,7 +1,7 @@
 Input file size 80.4570KB
 
 # ===================================================
-# Results
+# Results: dog.png
 # ===================================================
 
 k=2
@@ -52,6 +52,18 @@ Execution time: 0.9994826316833496 seconds
 Execution time: 1.0965321063995361 seconds
 
 
+k=12
+--encoding--
+
+Compressed file size 98.837 KB
+
+Execution time: 0.9824912548065186 seconds
+
+--decoding--
+
+Execution time: 1.065842628479004 seconds
+
+
 k=16
 --encoding--
 
@@ -62,6 +74,18 @@ Execution time: 1.3025949001312256 seconds
 --decoding--
 
 Execution time: 2.2255468368530273 seconds
+
+
+k=20
+--encoding--
+
+Compressed file size 275.194 KB
+
+Execution time: 1.3733057975769043 seconds
+
+--decoding--
+
+Execution time: 2.1144068241119385 seconds
 
 
 k=24
@@ -75,4 +99,23 @@ Execution time: 3.085209369659424 seconds
 
 Execution time: 2.187871217727661 seconds
 
+
+k=30
+--encoding--
+
+Compressed file size 237.86 KB
+
+Execution time: 88.18724989891052 seconds
+
+--decoding--
+
+Execution time: 1.9942939281463623 seconds
+
+
+k=31
+[encoding crashes (silently?)]
+
+
+k=32
+[MemoryError raised in Python]
 

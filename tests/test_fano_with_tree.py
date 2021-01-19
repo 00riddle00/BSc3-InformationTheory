@@ -107,7 +107,7 @@ def bitReader(n):
 # =============================================================================
 
 if len(sys.argv) < 4:
-    sys.ext('Usage: ShannonFano.py [e|d] '
+    sys.exit('Usage: ShannonFano.py [e|d] '
           '[path]InputFileName [path]OutputFileName parameter')
 
 mode = sys.argv[1] # encoding/decoding
@@ -208,10 +208,10 @@ if mode == 'e':
 
     tailLengthBitStr = bin(len(tail)) # then we write the length of the tail
     tailLengthBitStr = tailLengthBitStr[2:]
-    tailLengthBitStr = '0' * (4 - len(tailLengthBitStr)) + tailLengthBitStr
+    # tailLengthBitStr = '0' * (4 - len(tailLengthBitStr)) + tailLengthBitStr
+    tailLengthBitStr = '0' * (5 - len(tailLengthBitStr)) + tailLengthBitStr
     byteWriter(tailLengthBitStr, fo)
 
-    # TODO make it '5'
     if len(tail) > 0:
         byteWriter(tail, fo)
 
@@ -275,9 +275,6 @@ if mode == 'e':
                 if not codes:
                     break
 
-                if stack:
-                    stack.pop()
-
                 # go right
                 code.append('1')
                 node = ''
@@ -339,7 +336,7 @@ if mode == 'e':
 if mode == 'd':
     bitPosition = 0
     parameter = int(bitReader(5), 2) # First read the parameter
-    tailLength = int(bitReader(4), 2)
+    tailLength = int(bitReader(5), 2)
     if tailLength > 0:
         tail = int(bitReader(tailLength), 2)
         tail = bin(tail)
@@ -374,29 +371,31 @@ if mode == 'd':
             else:
                 code = []
 
+            code.append('1')
+
             # go right
             right_child = int(bitReader(1))
 
             if right_child == 0:
-                code.append('1')
+                # code.append('1')
                 temp = [i for i in code]
                 stack.append(temp)
 
             elif right_child == 1:
-                code.append('1')
+                # code.append('1')
                 dic[''.join(code)] = bitReader(parameter)
 
                 if stack:
                     code = stack.pop()
                 else:
-                    if back_to_root:
-                        code = []
-                        back_to_root = False
+                    if parameter != 2:
+                        if back_to_root:
+                            code = []
+                            back_to_root = False
+                        else:
+                            break
                     else:
                         break
-
-                if stack:
-                    stack.pop()
 
                 # go right
                 right_child = int(bitReader(1))

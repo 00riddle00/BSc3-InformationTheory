@@ -1,0 +1,121 @@
+
+Input file size 1.0000MB
+
+# ===================================================
+# Results with Tree: text.txt
+# ===================================================
+
+k=2
+--encoding--
+
+Compressed file size 1.015624 MB
+
+Execution time: 16.06432604789734 seconds
+
+--decoding--
+
+Execution time: 11.922101974487305 seconds
+
+k=3
+--encoding--
+
+Compressed file size 1.015696 MB
+
+Execution time: 13.599535465240479 seconds
+
+--decoding--
+
+Execution time: 11.638784885406494 seconds
+
+
+k=4
+--encoding--
+
+Compressed file size 844.909 KB
+
+Execution time: 12.399142503738403 seconds
+
+--decoding--
+
+Execution time: 9.976423025131226 seconds
+
+
+k=8
+--encoding--
+
+Compressed file size 554.684 KB
+
+Execution time: 11.46650505065918 seconds
+
+--decoding--
+
+Execution time: 6.62873101234436 seconds
+
+
+k=12
+--encoding--
+
+Compressed file size 621.512 KB
+
+Execution time: 11.950839281082153 seconds
+
+--decoding--
+
+Execution time: 7.346020936965942 seconds
+
+
+k=16
+--encoding--
+
+Compressed file size 483.481 KB
+
+Execution time: 10.857435703277588 seconds
+
+--decoding--
+
+Execution time: 5.676959037780762 seconds
+
+
+k=20
+--encoding--
+
+Compressed file size 508.198 KB
+
+Execution time: 11.31150484085083 seconds
+
+--decoding--
+
+Execution time: 5.940202474594116 seconds
+
+
+k=24
+--encoding--
+
+Compressed file size 413.915 KB
+
+Execution time: 12.032434463500977 seconds
+
+--decoding--
+
+Execution time: 5.036694288253784 seconds
+
+
+k=30
+--encoding--
+
+Compressed file size 480.438 KB
+
+Execution time: 100.1510853767395 seconds
+
+--decoding--
+
+Execution time: 5.448152780532837 seconds
+
+
+k=31
+[encoding crashes (silently?)]
+
+
+k=32
+[MemoryError raised in Python]
+

@@ -1,0 +1,78 @@
+
+Input file size 4.2643MB
+
+# ===================================================
+# Results with Tree: marbles.bmp
+# ===================================================
+
+k=2
+--encoding--
+
+Compressed file size 4.596476 MB
+
+Executioon time: 63.26237392425537 seconds
+
+--decoding--
+
+Execution time: 54.849868297576904 seconds
+
+
+k=3
+--encoding--
+
+Compressed file size 4.301154 MB
+
+Executioon time: 57.96531558036804 seconds
+
+--decoding--
+
+Execution time: 49.29996132850647 seconds
+
+
+k=4
+--encoding--
+
+Compressed file size 4.371765 MB
+
+Execution time: 53.83966374397278 seconds
+
+--decoding--
+
+Execution time: 50.1942572593689 seconds
+
+
+k=8
+--encoding--
+
+Compressed file size 3.813102 MB
+
+Execution time: 50.149418354034424 seconds
+
+--decoding--
+
+Execution time: 44.43102765083313 seconds
+
+
+k=16
+--encoding--
+
+Compressed file size 3.395488 MB
+
+Execution time: 54.21285820007324 seconds
+
+--decoding--
+
+Execution time: 38.01038122177124 seconds
+
+
+k=24
+--encoding--
+
+Compressed file size 3.056332 MB
+
+Execution time: 120.8928792476654 seconds
+
+--decoding--
+
+Execution time: 33.730303049087524 seconds
+

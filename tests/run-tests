@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+TESTFILE="dog.png"
+#TESTFILE="black.bmp"
+#TESTFILE="gray.bmp"
+#TESTFILE="marbles.bmp"
+#TESTFILE="text.txt"
+
+RESULTFILE="temp_results.txt"
+
+truncate -s 0 "$RESULTFILE"
+
+for K in 2 3 4 8 16 24
+do
+    PARAMETER="$K"
+    echo "========================================================="                                                  | tee -a "$RESULTFILE"
+    echo "k=$PARAMETER"                                                                                               | tee -a "$RESULTFILE"
+    echo "========================================================="                                                  | tee -a "$RESULTFILE"
+    ./test_fano_with_tree.py  e assets/"$TESTFILE"                   results/fano/encoded."$TESTFILE".bin $PARAMETER  | tee -a "$RESULTFILE"
+    echo "---------------------------------------------------------"                                                  | tee -a "$RESULTFILE"
+    ./test_fano_with_tree.py  d results/fano/encoded."$TESTFILE".bin results/fano/decoded."$TESTFILE"                 | tee -a "$RESULTFILE"
+    diff -s                     assets/"$TESTFILE"                   results/fano/decoded."$TESTFILE"                 | tee -a "$RESULTFILE"
+    echo -en "\n\n" | tee -a "$RESULTFILE"
+done

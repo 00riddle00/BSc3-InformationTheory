@@ -1,5 +1,9 @@
+
 Input file size 4.2643MB
 
+# ===================================================
+# Results: marbles.bmp
+# ===================================================
 
 k=2
 --encoding--
@@ -12,15 +16,18 @@ Execution time: 72.47987198829651 seconds
 
 Execution time: 64.58809685707092 seconds
 
+
 k=3
 --encoding--
 
 Compressed file size 4.301159 MB
 
 Execution time: 64.1059353351593 seconds
+
 --decoding--
 
 Execution time: 57.66033744812012 seconds
+
 
 k=4
 --encoding--
@@ -28,9 +35,11 @@ k=4
 Compressed file size 4.371778 MB
 
 Execution time: 58.31806492805481 seconds
+
 --decoding--
 
 Execution time: 58.484931230545044 seconds
+
 
 k=8
 --encoding--
@@ -38,9 +47,11 @@ k=8
 Compressed file size 3.813598 MB
 
 Execution time: 52.06877589225769 seconds
+
 --decoding--
 
 Execution time: 50.71416187286377 seconds
+
 
 k=16
 --encoding--
@@ -48,9 +59,11 @@ k=16
 Compressed file size 3.478053 MB
 
 Execution time: 49.25487565994263 seconds
+
 --decoding--
 
 Execution time: 45.03227972984314 seconds
+
 
 k=24
 --encoding--
@@ -58,5 +71,8 @@ k=24
 Compressed file size 3.721196 MB
 
 Execution time: 51.48163819313049 seconds
+
 --decoding--
+
+Execution time: 38.69186449050903 seconds
 
