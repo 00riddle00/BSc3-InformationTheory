@@ -107,9 +107,8 @@ def bitReader(n):
 # =============================================================================
 
 if len(sys.argv) < 4:
-    print('Usage: ShannonFano.py [e|d] '
+    sys.exit('Usage: ShannonFano.py [e|d] '
           '[path]InputFileName [path]OutputFileName parameter')
-    exit()
 
 mode = sys.argv[1] # encoding/decoding
 
@@ -147,7 +146,7 @@ mid_time = time.time()
 # Encoding
 # =============================================================================
 
-DEBUG = True
+DEBUG = False
 
 def debug(*args, **kwargs):
     if DEBUG:
@@ -249,6 +248,7 @@ if mode == 'e':
     fano_tree = []
     code = []
     codes =[(tup[2]) for tup in tupleList]
+    # print("codes=", codes)
 
     while True:
         code.append('0')
@@ -325,6 +325,9 @@ if mode == 'e':
 
     byteWriter(''.join(fano_tree), fo)
 
+    # print("TREE: ", fano_tree)
+    # exit()
+
     # -------------------------------------------------------------------------
 
     byteStr = ''
@@ -395,7 +398,17 @@ if mode == 'd':
     code = []
     back_to_root = True
 
+    # count = 0
+
     while True:
+
+        # count += 1
+        # if count > 8:
+            # exit()
+
+        # print("iter------------------------", count)
+        # print("stack.start=", stack)
+
         # go left
         left_child = int(bitReader(1)) # 0 = not a leaf, 1 = a leaf
 
@@ -403,6 +416,9 @@ if mode == 'd':
             code.append('0')
             temp = [i for i in code]
             stack.append(temp)
+            # print("11")
+            # print("stack:=", stack)
+            # print(dic)
             continue
 
         elif left_child == 1:
@@ -429,11 +445,13 @@ if mode == 'd':
                 if stack:
                     code = stack.pop()
                 else:
-                    if back_to_root:
-                        code = []
-                        back_to_root = False
-                    else:
-                        break
+                    break
+                    code = []
+                    # if back_to_root:
+                        # code = []
+                        # back_to_root = False
+                    # else:
+                        # break
 
                 if stack:
                     stack.pop()
@@ -445,12 +463,18 @@ if mode == 'd':
                     code.append('1')
                     temp = [i for i in code]
                     stack.append(temp)
+                    # print("22")
+                    # print("stack:=", stack)
+                    # print(dic)
                     continue
 
                 elif right_child == 1:
                     code.append('1')
                     dic[''.join(code)] = bitReader(parameter)
                     break
+        # print("33")
+        # print("stack:=", stack)
+        # print(dic)
 
     debug('\nThe dictionary of encodingBitStr : byteValue pairs:')
     debug(dic, '\n')

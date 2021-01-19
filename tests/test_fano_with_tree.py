@@ -107,9 +107,8 @@ def bitReader(n):
 # =============================================================================
 
 if len(sys.argv) < 4:
-    print('Usage: ShannonFano.py [e|d] '
+    sys.ext('Usage: ShannonFano.py [e|d] '
           '[path]InputFileName [path]OutputFileName parameter')
-    exit()
 
 mode = sys.argv[1] # encoding/decoding
 
