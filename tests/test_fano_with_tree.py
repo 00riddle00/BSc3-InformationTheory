@@ -66,35 +66,6 @@ def write_leaf(tree, tupleList):
 def to_str(param):
     return ''.join(param)
 
-# Decoding the tree
-#
-def decode_tree(code):
-    left_child = int(bitReader(1))
-
-    if left_child == 1:
-        code.append('0')
-        dic[''.join(code)] = bitReader(parameter)
-        code.pop()
-    elif left_child == 0:
-        code.append('0')
-        decode_tree(code)
-
-    right_child = int(bitReader(1))
-
-    if right_child == 1:
-        code.append('1')
-        dic[''.join(code)] = bitReader(parameter)
-        code.pop()
-        if code:
-            code.pop()
-    elif right_child == 0:
-        code.append('1')
-        decode_tree(code)
-    else:
-        sys.exit("DecodingError: cannot decode the tree")
-
-    return
-
 # check global variable 'bitStream' (string), if it's more than
 # 8 characters, write chars to a file in groups of 8 (byte),
 # until 'bitStream' is less than 8 chars. 'bitStream' variable
@@ -271,15 +242,15 @@ if mode == 'e':
     debug()
 
     # -------------------------------------------------------------------------
-    # Encoding tree
+    # Encoding the tree
+    # -------------------------------------------------------------------------
 
     stack = []
     fano_tree = []
-    codes =[(tup[2]) for tup in tupleList]
     code = []
+    codes =[(tup[2]) for tup in tupleList]
 
     while True:
-        # go left
         code.append('0')
         node = ''
 
@@ -290,43 +261,48 @@ if mode == 'e':
 
         if len(node) != len(to_str(code)):
             fano_tree.append('0') # left child is not a leaf
-            stack.append(code) # add current code to stack
+            temp = [i for i in code]
+            stack.append(temp)
             continue
         else:
             fano_tree.append('1') # left child is a leaf
             write_leaf(fano_tree, tupleList)
             codes.remove(node)
-            code.pop()
 
-        if stack:
-            code = stack.pop()
+            if stack:
+                code = stack.pop()
+            else:
+                code = []
 
-        # go right
-        code.append('1')
-        node = ''
+            # go right
+            code.append('1')
+            node = ''
 
-        for c in codes:
-            if c.startswith(to_str(code)):
-                node = c
-                break
+            for c in codes:
+                if c.startswith(to_str(code)):
+                    node = c
+                    break
 
-        if len(node) != len(to_str(code)):
-            fano_tree.append('0') # right child is not a leaf
-            stack.append(code) # add current code to stack
-            continue
-        else:
-            fano_tree.append('1') # right child is a leaf
-            write_leaf(fano_tree, tupleList)
-            codes.remove(node)
-            code.pop()
+            if len(node) != len(to_str(code)):
+                fano_tree.append('0') # right child is not a leaf
+                temp = [i for i in code]
+                stack.append(temp)
+                continue
+            else:
+                fano_tree.append('1') # right child is a leaf
+                write_leaf(fano_tree, tupleList)
+                codes.remove(node)
 
-            if not codes:
-                break
+                if stack:
+                    code = stack.pop()
+                else:
+                    code = []
 
-            if code:
-                code.pop()
+                if not codes:
+                    break
 
-            if not code and not stack:
+                if stack:
+                    stack.pop()
 
                 # go right
                 code.append('1')
@@ -339,7 +315,8 @@ if mode == 'e':
 
                 if len(node) != len(to_str(code)):
                     fano_tree.append('0') # right child is not a leaf
-                    stack.append(code) # do code.pop() ?? turbut cia jau ne
+                    temp = [i for i in code]
+                    stack.append(temp)
                     continue
                 else:
                     fano_tree.append('1') # right child is a leaf
@@ -347,6 +324,7 @@ if mode == 'e':
                     break
 
     byteWriter(''.join(fano_tree), fo)
+
     # -------------------------------------------------------------------------
 
     byteStr = ''
@@ -410,13 +388,73 @@ if mode == 'd':
 
     # -------------------------------------------------------------------------
     # Decoding the tree
+    # -------------------------------------------------------------------------
 
     dic = dict()
+    stack = []
     code = []
-    decode_tree(code)
+    back_to_root = True
 
-    debug('The dictionary of encodingBitStr : byteValue pairs:')
+    while True:
+        # go left
+        left_child = int(bitReader(1)) # 0 = not a leaf, 1 = a leaf
+
+        if left_child == 0:
+            code.append('0')
+            temp = [i for i in code]
+            stack.append(temp)
+            continue
+
+        elif left_child == 1:
+            code.append('0') # letter's code
+            dic[''.join(code)] = bitReader(parameter)
+
+            if stack:
+                code = stack.pop()
+            else:
+                code = []
+
+            # go right
+            right_child = int(bitReader(1))
+
+            if right_child == 0:
+                code.append('1')
+                temp = [i for i in code]
+                stack.append(temp)
+
+            elif right_child == 1:
+                code.append('1')
+                dic[''.join(code)] = bitReader(parameter)
+
+                if stack:
+                    code = stack.pop()
+                else:
+                    if back_to_root:
+                        code = []
+                        back_to_root = False
+                    else:
+                        break
+
+                if stack:
+                    stack.pop()
+
+                # go right
+                right_child = int(bitReader(1))
+
+                if right_child == 0:
+                    code.append('1')
+                    temp = [i for i in code]
+                    stack.append(temp)
+                    continue
+
+                elif right_child == 1:
+                    code.append('1')
+                    dic[''.join(code)] = bitReader(parameter)
+                    break
+
+    debug('\nThe dictionary of encodingBitStr : byteValue pairs:')
     debug(dic, '\n')
+
     # -------------------------------------------------------------------------
 
     # read the encoded data, decode it, write into the output file
